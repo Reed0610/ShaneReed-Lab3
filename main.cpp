@@ -7,22 +7,38 @@ static DevI2C devI2c(PB_11, PB_10);
 static LSM6DSLSensor acc_gyro(&devI2c, 0xD4, D4, D5); // high address
 
 float computeAngle(int x, int y, int z) {
-    // Calculate the pitch (or slope) angle using accelerometer readings
-    // Take the acceleration values in X, Y, and Z axes as input
+    // Calculate the roll and pitch angles using accelerometer readings
+    // Take the acceleration values in X, Y, and Z axes as inputs
 
     // Convert the acceleration values to floating-point numbers
     float accX = static_cast<float>(x);
     float accY = static_cast<float>(y);
     float accZ = static_cast<float>(z);
 
-    // Calculate the pitch angle using Equation 6
-    float pitch = atan2(accY, sqrt(accX * accX + accZ * accZ));
+    // Calculate the roll angle using Equation 7
+    float roll = atan2(accX, sqrt(accY * accY + accZ * accZ));
 
-    // Convert the angle from radians to degrees
+    // Calculate the pitch angle Equation 6
+    float pitch = atan2(-accY, sqrt(accX * accX + accZ * accZ));
+
+    // Convert the angles from radians to degrees
+    float rollDegrees = roll * 180.0f / PI;
     float pitchDegrees = pitch * 180.0f / PI;
 
-    return pitchDegrees;
-}
+    // Check if the board is lying flat on the table
+    if (rollDegrees > -5.0f && rollDegrees < 5.0f && pitchDegrees > -5.0f && pitchDegrees < 5.0f) {
+        // Turn on LED 1
+        DigitalOut led(LED1);
+        led = 1;
+    } else {
+        // Turn off LED 1
+        DigitalOut led(LED1);
+        led = 0;
+    }
+
+    return pitchDegrees; // Return the pitch angle
+    }
+
 
 int main() {
     uint8_t id;
