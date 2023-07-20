@@ -4,7 +4,7 @@
 #define PI 3.141592654
 
 static DevI2C devI2c(PB_11, PB_10);
-static LSM6DSLSensor acc_gyro(&devI2c, 0xD4, D4, D5); // high address
+static LSM6DSLSensor acc_gyro(&devI2c, 0xD4, D4, D5);
 
 float computeAngle(int x, int y, int z) {
     // Calculate the roll and pitch angles using accelerometer readings
@@ -26,7 +26,7 @@ float computeAngle(int x, int y, int z) {
     float pitchDegrees = pitch * 180.0f / PI;
 
     // Check if the board is lying flat on the table
-    if (rollDegrees > -5.0f && rollDegrees < 5.0f && pitchDegrees > -5.0f && pitchDegrees < 5.0f) {
+    if (rollDegrees > -2.0f && rollDegrees < 2.0f && pitchDegrees > -2.0f && pitchDegrees < 2.0f) {
         // Turn on LED 1
         DigitalOut led(LED1);
         led = 1;
